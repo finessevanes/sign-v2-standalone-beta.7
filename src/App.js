@@ -59,6 +59,24 @@ function App() {
     }
   }
 
+  async function handleDisconnect() {
+    try {
+      await signClient.disconnect({
+        topic: session.topic,
+        message: "User disconnected",
+        code: 6000,
+      });
+      reset();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const reset = () => {
+    setAccount([]);
+    setSession([]);
+  };
+
   useEffect(() => {
     if (!signClient) {
       createClient();
@@ -69,7 +87,10 @@ function App() {
     <div className="App">
       <h1>Sign v2 Standalone</h1>
       {account.length ? (
-        <p>{account}</p>
+        <>
+          <p>{account}</p>
+          <button onClick={handleDisconnect}>Disconnect</button>
+        </>
       ) : (
         <button onClick={handleConnect} disabled={!signClient}>
           Connect
