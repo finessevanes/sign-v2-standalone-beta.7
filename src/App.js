@@ -10,6 +10,8 @@ const web3Modal = new Web3Modal({
 
 function App() {
   const [signClient, setSignClient] = useState();
+  const [session, setSession] = useState([]);
+  const [account, setAccount] = useState([]);
 
   async function createClient() {
     try {
@@ -33,13 +35,25 @@ function App() {
         },
       };
 
-      const { uri } = await signClient.connect({
+      const { uri, approval } = await signClient.connect({
         requiredNamespaces: proposalNamespace,
       });
 
       if (uri) {
         web3Modal.openModal({ uri });
+        const sessionNamespace = await approval();
+        onSessionConnected(sessionNamespace);
+        web3Modal.closeModal();
       }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function onSessionConnected(session) {
+    try {
+      setSession(session);
+      setAccount(session.namespaces.eip155.accounts[0].slice(9));
     } catch (e) {
       console.log(e);
     }
@@ -54,9 +68,13 @@ function App() {
   return (
     <div className="App">
       <h1>Sign v2 Standalone</h1>
-      <button onClick={handleConnect} disabled={!signClient}>
-        Connect
-      </button>
+      {account.length ? (
+        <p>{account}</p>
+      ) : (
+        <button onClick={handleConnect} disabled={!signClient}>
+          Connect
+        </button>
+      )}
     </div>
   );
 }
