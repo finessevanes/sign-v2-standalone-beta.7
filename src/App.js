@@ -19,6 +19,7 @@ function App() {
         projectId: process.env.REACT_APP_PROJECT_ID,
       });
       setSignClient(signClient);
+      await subscribeToEvents(signClient);
     } catch (e) {
       console.log(e);
     }
@@ -67,6 +68,19 @@ function App() {
         code: 6000,
       });
       reset();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function subscribeToEvents(client) {
+    if (!client)
+      throw Error("Unable to subscribe to events. Client does not exist.");
+    try {
+      client.on("session_delete", () => {
+        console.log("The user has disconnected the session from their wallet.");
+        reset();
+      });
     } catch (e) {
       console.log(e);
     }
