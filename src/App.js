@@ -12,6 +12,7 @@ function App() {
   const [signClient, setSignClient] = useState();
   const [session, setSession] = useState([]);
   const [account, setAccount] = useState([]);
+  const [txnUrl, setTxnUrl] = useState();
 
   async function createClient() {
     try {
@@ -106,8 +107,7 @@ function App() {
           params: [tx],
         },
       });
-
-      console.log(result);
+      setTxnUrl(result);
     } catch (e) {
       console.log(e);
     }
@@ -132,6 +132,18 @@ function App() {
           <p>{account}</p>
           <button onClick={handleSend}>Send Transaction</button>
           <button onClick={handleDisconnect}>Disconnect</button>
+          {txnUrl && (
+            <h2>
+              Check out your transaction{" "}
+              <a
+                href={`https://goerli.etherscan.io/tx/${txnUrl}`}
+                target="_blank"
+              >
+                here
+              </a>
+              !
+            </h2>
+          )}
         </>
       ) : (
         <button onClick={handleConnect} disabled={!signClient}>
