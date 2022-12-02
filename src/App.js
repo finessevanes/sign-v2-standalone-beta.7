@@ -1,23 +1,30 @@
-import logo from "./logo.svg";
+import { useState, useEffect } from "react";
+import { SignClient } from "@walletconnect/sign-client";
 import "./App.css";
 
 function App() {
+  const [signClient, setSignClient] = useState();
+
+  async function createClient() {
+    try {
+      const signClient = await SignClient.init({
+        projectId: process.env.REACT_APP_PROJECT_ID,
+      });
+      setSignClient(signClient);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    if (!signClient) {
+      createClient();
+    }
+  }, [signClient]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Sign v2 Standalone</h1>
     </div>
   );
 }
