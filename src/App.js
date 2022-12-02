@@ -86,6 +86,33 @@ function App() {
     }
   }
 
+  async function handleSend() {
+    if (!account.length) throw Error("No account found");
+    try {
+      const tx = {
+        from: account,
+        to: "0xBDE1EAE59cE082505bB73fedBa56252b1b9C60Ce",
+        data: "0x",
+        gasPrice: "0x029104e28c",
+        gasLimit: "0x5208",
+        value: "0x00",
+      };
+
+      const result = await signClient.request({
+        topic: session.topic,
+        chainId: "eip155:5",
+        request: {
+          method: "eth_sendTransaction",
+          params: [tx],
+        },
+      });
+
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   const reset = () => {
     setAccount([]);
     setSession([]);
@@ -103,6 +130,7 @@ function App() {
       {account.length ? (
         <>
           <p>{account}</p>
+          <button onClick={handleSend}>Send Transaction</button>
           <button onClick={handleDisconnect}>Disconnect</button>
         </>
       ) : (
